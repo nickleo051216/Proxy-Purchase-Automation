@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ZN Studio 代購系統 Demo｜Nick Chang</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --line-green: #06C755;
+    --line-bg: #8CABD8;
+    --bubble-out: #06C755;
+    --bubble-in: #FFFFFF;
+    --text-dark: #1A1A1A;
+    --text-muted: #8B8B8B;
+    --card-border: #E5E7EB;
+    --bg-cream: #FAF7F2;
+    --accent-coral: #E85D4A;
+    --accent-navy: #1E2A44;
+  }
+  html, body { overflow-x: hidden; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg-cream);
+    color: var(--text-dark);
+    line-height: 1.5;
+    min-height: 100vh;
+    font-weight: 400;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ===== Top Header ===== */
+  .brand-header {
+    background: var(--accent-navy);
+    color: #FFF;
+    padding: 20px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--accent-coral);
+  }
+  .brand-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .brand-left { display: flex; align-items: center; gap: 14px; }
+  .brand-logo { width: 40px; height: 40px; background: var(--accent-coral); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; letter-spacing: -0.5px; }
+  .brand-title { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
+  .brand-sub { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .brand-right { display: flex; align-items: center; gap: 10px; font-size: 12px; opacity: 0.85; }
+  .brand-dot { width: 8px; height: 8px; border-radius: 50%; background: #06C755; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ===== Intro Hero ===== */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  @media (min-width: 900px) { .hero { grid-template-columns: 1fr 1fr; padding: 64px 24px 32px; gap: 48px; align-items: center; } }
+
+  .hero-label {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border: 1px solid var(--accent-navy);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .hero-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+  }
+  .hero-title em { font-style: normal; color: var(--accent-coral); }
+  .hero-desc { font-size: 15px; color: #555; line-height: 1.7; max-width: 460px; }
+  .hero-meta { margin-top: 24px; display: flex; gap: 24px; flex-wrap: wrap; }
+  .hero-meta-item { font-size: 12px; color: var(--text-muted); }
+  .hero-meta-item strong { color: var(--accent-navy); font-size: 22px; font-weight: 900; display: block; margin-bottom: 2px; letter-spacing: -0.5px; }
+
+  .hero-visual {
+    background: linear-gradient(135deg, #1E2A44 0%, #2D3E5E 100%);
+    border-radius: 20px;
+    padding: 40px 32px;
+    color: #FFF;
+    position: relative;
+    overflow: hidden;
+    min-height: 240px;
+  }
+  .hero-visual::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 260px; height: 260px;
+    background: var(--accent-coral);
+    border-radius: 50%;
+    opacity: 0.2;
+  }
+  .hero-visual::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -60px;
+    width: 200px; height: 200px;
+    background: var(--line-green);
+    border-radius: 50%;
+    opacity: 0.15;
+  }
+  .hero-stats {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .hero-stat { border-left: 2px solid var(--accent-coral); padding-left: 14px; }
+  .hero-stat-num { font-size: 28px; font-weight: 900; letter-spacing: -0.8px; margin-bottom: 2px; }
+  .hero-stat-label { font-size: 11px; opacity: 0.8; letter-spacing: 0.5px; }
+  .hero-quote { position: relative; z-index: 1; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 13px; line-height: 1.6; opacity: 0.9; font-style: italic; }
+
+  /* ===== Section Headers ===== */
+  .section { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+  .sec-head { margin-bottom: 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-coral); letter-spacing: 2px; }
+  .sec-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-top: 4px; }
+  .sec-desc { font-size: 13px; color: var(--text-muted); max-width: 420px; line-height: 1.6; }
+
+  /* ===== Step Navigation ===== */
+  .step-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .step-nav::-webkit-scrollbar { display: none; }
+  .step-btn {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border: 1px solid var(--card-border);
+    background: #FFF;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-btn .n { font-family: 'JetBrains Mono', monospace; color: var(--text-muted); font-size: 11px; }
+  .step-btn.active { background: var(--accent-navy); color: #FFF; border-color: var(--accent-navy); }
+  .step-btn.active .n { color: var(--accent-coral); }
+  .step-btn:hover:not(.active) { border-color: var(--accent-navy); }
+
+  /* ===== Phone Frame ===== */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (min-width: 900px) { .demo-grid { grid-template-columns: minmax(0, 380px) 1fr; gap: 48px; } }
+
+  .phone-wrap {
+    position: sticky;
+    top: 104px;
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    width: 100%;
+    max-width: 380px;
+    background: #1A1A1A;
+    border-radius: 42px;
+    padding: 14px;
+    box-shadow: 0 30px 60px -20px rgba(30, 42, 68, 0.4), 0 10px 20px -10px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .phone-screen {
+    background: #EEF3F7;
+    border-radius: 30px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 680px;
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 24px;
+    background: #1A1A1A;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .chat-header {
+    background: #FFF;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 36px 16px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chat-back { font-size: 20px; color: #666; line-height: 1; padding: 4px; }
+  .chat-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-coral), #F08B5D);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .chat-name-wrap { flex: 1; }
+  .chat-name { font-size: 14px; font-weight: 500; color: var(--text-dark); }
+  .chat-status { font-size: 11px; color: var(--text-muted); }
+  .chat-icons { display: flex; gap: 12px; color: #888; font-size: 18px; }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 12px 80px;
+    background: #8CABD8;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 1px, transparent 2px),
+      radial-gradient(circle at 80% 60%, rgba(255,255,255,0.08) 1px, transparent 2px);
+    background-size: 60px 60px, 80px 80px;
+    scroll-behavior: smooth;
+  }
+  .chat-body::-webkit-scrollbar { width: 0; }
+
+  .msg-row { display: flex; margin-bottom: 8px; animation: slideIn 0.4s ease-out; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .msg-row.out { justify-content: flex-end; }
+  .msg-row.in { justify-content: flex-start; }
+
+  .bubble {
+    max-width: 78%;
+    padding: 10px 13px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+  .bubble.out { background: var(--line-green); color: #FFF; border-bottom-right-radius: 4px; }
+  .bubble.in { background: #FFF; color: var(--text-dark); border-bottom-left-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+
+  .time { font-size: 10px; color: rgba(255,255,255,0.7); align-self: flex-end; margin: 0 4px 2px; }
+
+  /* ===== Flex Message (Order Card) ===== */
+  .flex-card {
+    max-width: 270px;
+    background: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: inherit;
+  }
+  .flex-card-hero {
+    background: linear-gradient(135deg, #1E2A44, #2D3E5E);
+    color: #FFF;
+    padding: 14px 16px;
+  }
+  .flex-card-hero-label { font-size: 10px; opacity: 0.7; letter-spacing: 1px; }
+  .flex-card-hero-id { font-size: 14px; font-weight: 700; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+  .flex-card-body { padding: 14px 16px; }
+  .flex-card-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; color: #555; }
+  .flex-card-row strong { color: var(--text-dark); font-weight: 500; }
+  .flex-card-items { border-top: 1px dashed #E5E7EB; padding-top: 10px; margin-top: 10px; }
+  .flex-item { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; }
+  .flex-item-name { color: #555; }
+  .flex-item-status { font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+  .status-wait { background: #FEF3C7; color: #92400E; }
+  .status-done { background: #D1FAE5; color: #065F46; }
+  .status-ship { background: #DBEAFE; color: #1E40AF; }
+
+  .flex-card-actions { display: flex; border-top: 1px solid #E5E7EB; }
+  .flex-btn {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-coral);
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .flex-btn:first-child { border-right: 1px solid #E5E7EB; color: #555; }
+  .flex-btn:hover { background: #FAFAFA; }
+
+  /* Welcome / Bind card */
+  .welcome-card {
+    max-width: 270px;
+    background: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .welcome-hero {
+    background: linear-gradient(135deg, var(--line-green), #05A349);
+    color: #FFF;
+    padding: 18px 16px 14px;
+    text-align: center;
+  }
+  .welcome-hero-emoji { font-size: 28px; display: block; margin-bottom: 4px; }
+  .welcome-hero-title { font-size: 14px; font-weight: 700; letter-spacing: 0.3px; }
+  .welcome-hero-sub { font-size: 11px; opacity: 0.9; margin-top: 3px; }
+  .welcome-body { padding: 14px 16px; font-size: 12px; color: #555; line-height: 1.6; }
+  .welcome-actions { border-top: 1px solid #E5E7EB; }
+  .welcome-btn {
+    width: 100%;
+    padding: 13px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--line-green);
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .welcome-btn:hover { background: #F0FDF4; }
+
+  /* Bind success card */
+  .bind-card {
+    max-width: 260px;
+    background: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-top: 3px solid var(--line-green);
+  }
+  .bind-head {
+    padding: 12px 14px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #059669;
+    font-weight: 500;
+  }
+  .bind-check {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--line-green); color: #FFF;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .bind-body { padding: 0 14px 14px; }
+  .bind-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px dashed #E5E7EB; }
+  .bind-row:last-child { border: none; }
+  .bind-row .k { color: var(--text-muted); }
+  .bind-row .v { color: var(--text-dark); font-weight: 500; }
+
+  /* Group shoutout card (admin notification) */
+  .shout-card {
+    max-width: 275px;
+    background: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .shout-hero {
+    background: linear-gradient(135deg, var(--accent-coral), #F08B5D);
+    color: #FFF;
+    padding: 14px 16px 12px;
+  }
+  .shout-label { font-size: 10px; letter-spacing: 2px; opacity: 0.85; font-weight: 500; }
+  .shout-title { font-size: 15px; font-weight: 700; margin-top: 3px; line-height: 1.3; }
+  .shout-sub { font-size: 11px; opacity: 0.9; margin-top: 4px; }
+  .shout-body { padding: 12px 16px; }
+  .shout-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #EEE;
+    align-items: center;
+  }
+  .shout-item:last-child { border: none; }
+  .shout-item-img {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: linear-gradient(135deg, #FEF3C7, #FCD34D);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .shout-item-info { flex: 1; min-width: 0; }
+  .shout-item-name { font-size: 12px; color: var(--text-dark); font-weight: 500; line-height: 1.3; }
+  .shout-item-price { font-size: 13px; color: var(--accent-coral); font-weight: 700; margin-top: 2px; }
+  .shout-item-price small { font-size: 10px; color: var(--text-muted); text-decoration: line-through; font-weight: 400; margin-left: 4px; }
+  .shout-urgency {
+    background: #FEF2F2; color: #991B1B;
+    font-size: 11px; padding: 6px 10px; margin: 10px 14px 0;
+    border-radius: 6px; text-align: center;
+    border: 1px solid #FECACA;
+  }
+  .shout-actions { display: flex; border-top: 1px solid #E5E7EB; margin-top: 10px; }
+  .shout-btn {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .shout-btn:first-child { border-right: 1px solid #E5E7EB; color: #555; font-weight: 500; }
+  .shout-btn:last-child { color: var(--accent-coral); }
+  .shout-btn:hover { background: #FAFAFA; }
+
+  /* LINE 系統對話框（輸入訊息的模擬） */
+  .line-modal {
+    max-width: 290px;
+    background: #FFF;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .line-modal-body {
+    padding: 20px 18px 14px;
+    text-align: center;
+  }
+  .line-modal-title { font-size: 14px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+  .line-modal-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; }
+  .line-modal-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-dark);
+    font-family: inherit;
+    text-align: left;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+  }
+  .line-modal-input .caret {
+    display: inline-block;
+    width: 1.5px;
+    height: 14px;
+    background: var(--line-green);
+    margin-left: 1px;
+    animation: blinkCaret 0.7s step-end infinite;
+  }
+  @keyframes blinkCaret { 50% { opacity: 0; } }
+  .line-modal-actions { display: flex; border-top: 1px solid #E5E7EB; }
+  .line-modal-btn {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .line-modal-btn:first-child { color: #888; border-right: 1px solid #E5E7EB; }
+  .line-modal-btn:last-child { color: var(--line-green); font-weight: 600; }
+
+  /* 後台視覺（代購主在後台喊單） */
+  .admin-panel {
+    max-width: 280px;
+    background: var(--accent-navy);
+    color: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .admin-head {
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.2);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; align-items: center; gap: 6px;
+    color: var(--accent-coral);
+  }
+  .admin-head::before { content: '⚙'; font-size: 13px; }
+  .admin-body { padding: 14px; }
+  .admin-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .admin-preview { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; font-size: 11.5px; line-height: 1.5; margin-bottom: 12px; }
+  .admin-stat { display: flex; justify-content: space-between; font-size: 11.5px; margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.15); }
+  .admin-stat .n { color: var(--accent-coral); font-weight: 700; }
+  .admin-push-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--accent-coral);
+    border: none;
+    border-radius: 8px;
+    color: #FFF;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  /* Wish item preview card */
+  .wish-card {
+    max-width: 250px;
+    background: #FFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-left: 3px solid var(--accent-coral);
+  }
+  .wish-head { padding: 10px 14px; background: #FFF5F2; font-size: 11px; color: var(--accent-coral); font-weight: 500; letter-spacing: 1px; }
+  .wish-body { padding: 12px 14px; }
+  .wish-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 2px; }
+  .wish-value { font-size: 13px; color: var(--text-dark); margin-bottom: 8px; font-weight: 500; }
+  .wish-note { background: #F8F5F0; padding: 8px 10px; border-radius: 6px; font-size: 11px; color: #666; }
+
+  /* Typing indicator */
+  .typing { display: inline-flex; gap: 3px; padding: 4px 0; }
+  .typing span { width: 6px; height: 6px; background: #AAA; border-radius: 50%; animation: blink 1.4s infinite; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+
+  .chat-input-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFF;
+    border-top: 1px solid #E5E7EB;
+    padding: 10px 12px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .fake-input {
+    flex: 1;
+    background: #F3F4F6;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: #999;
+  }
+
+  /* ===== Controls Panel ===== */
+  .controls {
+    background: #FFF;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+  }
+  .ctrl-label { font-size: 11px; letter-spacing: 2px; color: var(--accent-coral); font-family: 'JetBrains Mono', monospace; margin-bottom: 6px; }
+  .ctrl-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .ctrl-desc { font-size: 13px; color: #555; line-height: 1.6; margin-bottom: 20px; }
+
+  .ctrl-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .ctrl-step {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-cream);
+    border-radius: 10px;
+    border: 1px solid transparent;
+  }
+  .ctrl-step.current { background: #FFF5F2; border-color: var(--accent-coral); }
+  .ctrl-step.done { opacity: 0.6; }
+  .ctrl-step-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #FFF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    border: 1px solid var(--card-border);
+  }
+  .ctrl-step.current .ctrl-step-icon { background: var(--accent-coral); color: #FFF; border-color: var(--accent-coral); }
+  .ctrl-step.done .ctrl-step-icon { background: var(--line-green); color: #FFF; border-color: var(--line-green); }
+  .ctrl-step-body { flex: 1; }
+  .ctrl-step-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+  .ctrl-step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  .ctrl-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn {
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent-navy); color: #FFF; }
+  .btn-primary:hover { background: #2D3E5E; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary { background: #FFF; color: var(--accent-navy); border: 1px solid var(--card-border); }
+  .btn-secondary:hover { border-color: var(--accent-navy); }
+
+  /* ===== Comparison ===== */
+  .cmp-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; }
+  @media (min-width: 800px) { .cmp-grid { grid-template-columns: 1fr 1fr; } }
+  .cmp-card {
+    background: #FFF;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+  }
+  .cmp-card.ours { border: 2px solid var(--accent-coral); background: linear-gradient(180deg, #FFF 0%, #FFF9F7 100%); }
+  .cmp-badge {
+    position: absolute;
+    top: -10px; left: 20px;
+    background: var(--accent-coral);
+    color: #FFF;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .cmp-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.3px; }
+  .cmp-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; }
+  .cmp-point { display: flex; gap: 10px; font-size: 13px; padding: 8px 0; border-bottom: 1px dashed #EEE; line-height: 1.5; }
+  .cmp-point:last-child { border: none; }
+  .cmp-icon { flex-shrink: 0; margin-top: 2px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; }
+  .cmp-good { color: #059669; }
+  .cmp-bad { color: #9CA3AF; }
+
+  /* ===== Footer ===== */
+  .foot {
+    max-width: 1200px;
+    margin: 32px auto 0;
+    padding: 32px 24px 48px;
+    border-top: 1px solid var(--card-border);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  @media (min-width: 800px) { .foot { grid-template-columns: 1fr 1fr; } }
+  .foot-block strong { display: block; font-size: 12px; letter-spacing: 2px; color: var(--accent-coral); font-family: 'JetBrains Mono', monospace; margin-bottom: 10px; }
+  .foot-name { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .foot-title { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+  .foot-line { font-size: 13px; padding: 4px 0; color: #333; display: flex; gap: 10px; align-items: center; }
+  .foot-line a { color: var(--accent-navy); text-decoration: none; border-bottom: 1px dotted var(--accent-navy); }
+  .foot-line a:hover { color: var(--accent-coral); border-color: var(--accent-coral); }
+
+  .reset-hint { font-size: 11px; color: var(--text-muted); margin-top: 12px; text-align: center; }
+</style>
+</head>
+<body>
+
+<header class="brand-header">
+  <div class="brand-inner">
+    <div class="brand-left">
+      <div class="brand-logo">ZN</div>
+      <div>
+        <div class="brand-title">ZN Studio × 代購系統 Demo</div>
+        <div class="brand-sub">互動式模擬・為 <span id="client-name">周小姐</span> 客製</div>
+      </div>
+    </div>
+    <div class="brand-right">
+      <div class="brand-dot"></div>
+      <span>LIVE MOCKUP · v1.0</span>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="hero-label">Proxy Purchase Automation</div>
+    <h1 class="hero-title">讓客人在 LINE 上<br><em>自己完成</em>訂單、拆單、許願</h1>
+    <p class="hero-desc">
+      整合 LINE OA + n8n + AI，把代購業務常見的「查單」「對單」「拆單決策」「許願商品採買」全部自動化。
+      客人不用加網站會員、妳不用人工打字對單、系統 24 小時在線運作。
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><strong>3</strong>核心功能模組</div>
+      <div class="hero-meta-item"><strong>0</strong>人工打單時間</div>
+      <div class="hero-meta-item"><strong>24/7</strong>自動化客服</div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">~2hr</div>
+        <div class="hero-stat-label">每日省下時間</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">$12K+</div>
+        <div class="hero-stat-label">月省人事成本</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">4-6mo</div>
+        <div class="hero-stat-label">預估回本週期</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">100%</div>
+        <div class="hero-stat-label">LINE 原生體驗</div>
+      </div>
+    </div>
+    <div class="hero-quote">
+      「客人本來就在 LINE 跟妳聊，為什麼要把他們趕去網頁？」
+      <br>— 這套系統的核心哲學
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="sec-head">
+    <div>
+      <div class="sec-num">/ 01 · INTERACTIVE DEMO</div>
+      <h2 class="sec-title">點一下，感受真實的 LINE 體驗</h2>
+    </div>
+    <div class="sec-desc">
+      下面這支「虛擬手機」模擬客人操作的真實場景。按「下一步」跟著劇本走一次，每一句對話、每一張 Flex Message 卡片都是系統實際會產出的畫面。
+    </div>
+  </div>
+
+  <div class="step-nav">
+    <button class="step-btn active" data-scene="0"><span class="n">00</span> 開場</button>
+    <button class="step-btn" data-scene="1"><span class="n">01</span> 社群綁定</button>
+    <button class="step-btn" data-scene="2"><span class="n">02</span> 喊單推播</button>
+    <button class="step-btn" data-scene="3"><span class="n">03</span> 查單</button>
+    <button class="step-btn" data-scene="4"><span class="n">04</span> 拆單決策</button>
+    <button class="step-btn" data-scene="5"><span class="n">05</span> AI 許願</button>
+    <button class="step-btn" data-scene="6"><span class="n">06</span> 完成</button>
+  </div>
+
+  <div class="demo-grid">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="chat-header">
+            <div class="chat-back">‹</div>
+            <div class="chat-avatar" id="oa-avatar">ZN</div>
+            <div class="chat-name-wrap">
+              <div class="chat-name" id="oa-name">ZN 代購小幫手</div>
+              <div class="chat-status">● 使用中</div>
+            </div>
+            <div class="chat-icons">⋯</div>
+          </div>
+          <div class="chat-body" id="chat-body"></div>
+          <div class="chat-input-bar">
+            <div class="fake-input" id="fake-input">輸入訊息⋯</div>
+            <div style="color: var(--line-green); font-size: 20px;">↑</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctrl-label" id="ctrl-label">SCENE 00 / 05</div>
+      <h3 class="ctrl-title" id="ctrl-title">歡迎來到 ZN 代購系統</h3>
+      <p class="ctrl-desc" id="ctrl-desc">
+        這是一個互動式 Demo，您將扮演客人，體驗完整的代購下單 → 查單 → 拆單決策 → 許願採買流程。每一步驟都是真實系統會跑的邏輯，按下「下一步」開始。
+      </p>
+
+      <div class="ctrl-steps" id="ctrl-steps"></div>
+
+      <div class="ctrl-actions">
+        <button class="btn btn-primary" id="btn-next">開始體驗 →</button>
+        <button class="btn btn-secondary" id="btn-reset">重新開始</button>
+      </div>
+      <div class="reset-hint">Tip: 左側手機畫面會跟著劇本即時更新</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="sec-head">
+    <div>
+      <div class="sec-num">/ 02 · COMPARISON</div>
+      <h2 class="sec-title">跟 suoo.io 那種 SaaS 平台比，我們贏在哪？</h2>
+    </div>
+    <div class="sec-desc">
+      周小姐研究過的「躺平系代購」suoo.io 是網頁型 SaaS 平台。以下是它們和 ZN Studio LINE OA 方案的本質差異。
+    </div>
+  </div>
+
+  <div class="cmp-grid">
+    <div class="cmp-card">
+      <div class="cmp-title">suoo.io 躺平系代購</div>
+      <div class="cmp-sub">// Web-first SaaS</div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>有獨立網頁商品頁，SEO 友善</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-bad">×</span><span>客戶資料在平台上，不是 100% 妳的</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-bad">×</span><span>客人要跳到瀏覽器才能查單 / 下單</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-bad">×</span><span>每月月費 + 每單抽成，用越多越貴</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-bad">×</span><span>沒有「客人上傳許願 AI 解析」功能</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-bad">×</span><span>規則由平台主導，想加功能要等</span></div>
+    </div>
+
+    <div class="cmp-card ours">
+      <div class="cmp-badge">ZN STUDIO</div>
+      <div class="cmp-title">LINE OA + n8n 自動化方案</div>
+      <div class="cmp-sub">// LINE-native automation</div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>客人直接在 LINE 完成所有事，零摩擦</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>客戶名單、訂單、資料 100% 是妳的</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>Flex Message 按鈕互動，拆單一鍵搞定</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>一次建置買斷，沒有每月月費或訂單抽成</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>AI 節點自動解析許願商品，直接進資料庫</span></div>
+      <div class="cmp-point"><span class="cmp-icon cmp-good">✓</span><span>系統檔案完整交付，妳可以自己維護或找我</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-block">
+    <strong>/ NEXT STEP</strong>
+    <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px; line-height: 1.5;">
+      喜歡這個方向嗎？<br>下一步我們可以約個時間，聊聊實際上線的時程與合作方式。
+    </div>
+    <div style="font-size: 13px; color: #555; line-height: 1.6;">
+      這個 Demo 還只是 Mockup —<br>真正的系統會跑在 n8n + Google Sheets 上，<br>三到五天就能上線第一版讓妳試用。
+    </div>
+  </div>
+  <div class="foot-block">
+    <strong>/ CONTACT</strong>
+    <div class="foot-name">Nick Chang</div>
+    <div class="foot-title">ZN Studio · n8n 認證教師</div>
+    <div class="foot-line">📧 <a href="mailto:nickleo051216@gmail.com">nickleo051216@gmail.com</a></div>
+    <div class="foot-line">📱 0932-684-051</div>
+    <div class="foot-line">🌐 <a href="https://portaly.cc/zn.studio" target="_blank">portaly.cc/zn.studio</a></div>
+    <div class="foot-line">💬 <a href="https://lin.ee/Faz0doj" target="_blank">LINE 官方帳號</a></div>
+    <div class="foot-line">🧵 <a href="https://www.threads.com/@nickai216" target="_blank">Threads @nickai216</a></div>
+  </div>
+</footer>
+
+<script>
+const sharedSteps = [
+  { key: 'bind', title: '場景 1・社群綁定', desc: '客人加 OA → 輸入社群暱稱綁定' },
+  { key: 'shout', title: '場景 2・喊單推播', desc: '社群喊單 → 推送 Flex Message 下單卡' },
+  { key: 'query', title: '場景 3・查單', desc: '客人輸入關鍵字，系統回傳訂單狀態卡片' },
+  { key: 'split', title: '場景 4・拆單決策', desc: '部分商品到貨，按按鈕決定是否先寄' },
+  { key: 'wish', title: '場景 5・AI 許願', desc: '客人文字描述想買的商品，AI 自動解析' },
+];
+function buildSteps(currentKey, doneKeys) {
+  return sharedSteps.map(s => {
+    const out = { title: s.title, desc: s.desc };
+    if (doneKeys && doneKeys.indexOf(s.key) >= 0) {
+      out.state = 'done';
+      out.desc = '已完成';
+    } else if (s.key === currentKey) {
+      out.state = 'current';
+    }
+    return out;
+  });
+}
+
+const scenes = [
+  {
+    title: '歡迎來到 ZN 代購系統',
+    desc: '這是一個互動式 Demo，您將扮演客人，體驗完整的「社群綁定 → 喊單推播 → 查單 → 拆單 → AI 許願」五段旅程。按「下一步」開始跑一次完整流程。',
+    steps: buildSteps(null, []),
+    action: '開始體驗 →',
+    messages: []
+  },
+
+  {
+    title: '場景 1 · 社群綁定（取代 suoo.io 的驗證碼流程）',
+    desc: 'suoo.io 要客人跳「網頁 → 複製 6 碼 → 加 OA → 貼驗證碼 → 回網頁」5 個步驟。我們只要「加 OA → 點按鈕 → 輸入社群暱稱」3 個步驟，而且全程都在 LINE 裡。客人零摩擦，資料也 100% 是妳的。',
+    steps: buildSteps('bind', []),
+    action: '下一步：喊單推播 →',
+    messages: [
+      { type: 'system', text: '👥 周媽媽愛買 加入了 ZN 代購', delay: 300 },
+      { type: 'typing', delay: 500 },
+      { type: 'in', text: '嗨～歡迎加入 ZN 代購的 VIP 行列 💖\n我是妳的專屬採買小幫手！', delay: 900 },
+      { type: 'flex-welcome', delay: 700 },
+      { type: 'system', text: '→ 客人點了「輸入社群暱稱」', delay: 1400 },
+      { type: 'line-modal', delay: 600 },
+      { type: 'system', text: '→ 客人按下「傳送」', delay: 3200 },
+      { type: 'out', text: '周媽媽愛買', delay: 400 },
+      { type: 'typing', delay: 500 },
+      { type: 'in', text: '太棒了 🎉\n已經把妳跟社群帳號綁定好囉！', delay: 1000 },
+      { type: 'flex-bind', delay: 700 },
+      { type: 'in', text: '之後社群有喊單，我會第一時間通知妳 📣', delay: 700 },
+    ]
+  },
+
+  {
+    title: '場景 2 · 喊單推播（social → OA 無縫接軌）',
+    desc: '真實情境：妳在 LINE 社群喊「今天團購日本 7-11 新品」，只要在後台按一個按鈕，系統立刻把 Flex Message 下單卡片推播給所有綁定客人。客人在 LINE 裡直接按「立即下單」，不用跳網頁、不用開瀏覽器。這是 suoo.io 做不到的體驗。',
+    steps: buildSteps('shout', ['bind']),
+    action: '下一步：客人查單 →',
+    messages: [
+      { type: 'system', text: '👆 畫面切換：代購主後台操作', delay: 300 },
+      { type: 'admin-panel', delay: 600 },
+      { type: 'system', text: '→ 代購主按下「一鍵推播」', delay: 2400 },
+      { type: 'system', text: '👇 畫面切換：客人的 LINE', delay: 800 },
+      { type: 'typing', delay: 400 },
+      { type: 'in', text: '📣 周媽媽，社群新團購通知！', delay: 900 },
+      { type: 'flex-shout', delay: 700 },
+      { type: 'system', text: '→ 客人按了「立即下單」', delay: 1500 },
+      { type: 'in', text: '好的！已經幫妳留了 2 盒 ✨\n訂單編號 #JP-2026-0847', delay: 600 },
+    ]
+  },
+
+  {
+    title: '場景 3 · 自助查單',
+    desc: '客人在 LINE 打「查單」兩個字，系統立刻從 Google Sheets 撈出她的訂單，用 Flex Message 卡片顯示訂單狀態、每個商品的到貨情況。妳完全不需要去翻訊息、打字回覆。',
+    steps: buildSteps('query', ['bind', 'shout']),
+    action: '下一步：拆單決策 →',
+    messages: [
+      { type: 'out', text: '查單', time: '14:32' },
+      { type: 'typing', delay: 600 },
+      { type: 'in', text: '嗨美人～找到妳的訂單囉 ✨\n這是最新狀態：', delay: 900 },
+      { type: 'flex-order', delay: 700 },
+    ]
+  },
+
+  {
+    title: '場景 4 · 部分到貨，拆單決策',
+    desc: '其中一件商品（資生堂防曬）已經到倉庫了，其他還在等。系統主動推播 Flex Message 給客人，讓她按按鈕決定：「先寄已到貨的」還是「等齊再寄」。一鍵搞定，妳完全不用打字溝通。',
+    steps: buildSteps('split', ['bind', 'shout', 'query']),
+    action: '下一步：AI 許願 →',
+    messages: [
+      { type: 'out', text: '查單', time: '14:32' },
+      { type: 'in', text: '嗨美人～找到妳的訂單囉 ✨\n這是最新狀態：' },
+      { type: 'flex-order' },
+      { type: 'in', text: '對了！有件商品到貨囉 📦\n要先寄還是等齊再一起寄？', delay: 500 },
+      { type: 'flex-ship', delay: 900 },
+      { type: 'system', text: '→ 客人按了「先寄這件」', delay: 1400 },
+      { type: 'in', text: '好的已經幫妳安排！\n明天出貨，7-11 取貨 🚚', delay: 500 },
+    ]
+  },
+
+  {
+    title: '場景 5 · AI 許願商品採買',
+    desc: '客人隨手用自然語言描述想買什麼（「日本 7-11 新出的草莓巧克力派，2 盒」），不用填表單、不用貼連結。AI 自動解析成結構化資料寫進 wishlist 資料庫，妳後台一打開就看到完整採買清單。',
+    steps: buildSteps('wish', ['bind', 'shout', 'query', 'split']),
+    action: '下一步：查看完整對比 →',
+    messages: [
+      { type: 'out', text: '幫我代購日本 7-11 新出的草莓巧克力派，2盒，有貨再跟我說價格～', time: '14:38' },
+      { type: 'typing', delay: 600 },
+      { type: 'in', text: '✨ 收到！我用 AI 幫妳整理好了：', delay: 1200 },
+      { type: 'flex-wish', delay: 700 },
+      { type: 'in', text: '等採購確認價格會再通知妳喔 💖\n直接回覆「確認」我就下單！', delay: 700 },
+    ]
+  },
+
+  {
+    title: '完成體驗！這就是 ZN 代購系統',
+    desc: '剛剛這短短幾分鐘裡，客人完成了綁定、收喊單、查單、拆單決策、AI 許願採買 —— 全部在 LINE 裡面，妳一個字都不用打。這些在 suoo.io 那種網頁平台上，客人至少要開三次瀏覽器。Demo 結束後可以滑到下方看完整對比。',
+    steps: buildSteps(null, ['bind', 'shout', 'query', 'split', 'wish']),
+    action: '✓ 體驗完畢 — 再看一次',
+    messages: [
+      { type: 'system', text: '👥 周媽媽愛買 完成社群綁定' },
+      { type: 'flex-bind' },
+      { type: 'in', text: '📣 周媽媽，社群新團購通知！' },
+      { type: 'flex-shout' },
+      { type: 'out', text: '查單' },
+      { type: 'in', text: '嗨美人～找到妳的訂單囉 ✨' },
+      { type: 'flex-order' },
+      { type: 'flex-ship' },
+      { type: 'system', text: '→ 客人按了「先寄這件」' },
+      { type: 'out', text: '幫我代購日本 7-11 新出的草莓巧克力派，2盒' },
+      { type: 'flex-wish' },
+    ]
+  }
+];
+
+const flexWelcomeHTML = `
+  <div class="welcome-card">
+    <div class="welcome-hero">
+      <span class="welcome-hero-emoji">🎉</span>
+      <div class="welcome-hero-title">歡迎加入 ZN 代購</div>
+      <div class="welcome-hero-sub">VIP 客人專屬一對一服務</div>
+    </div>
+    <div class="welcome-body">
+      請輸入您在 LINE 社群裡用的暱稱，我就能幫妳把社群身份和訂單綁定好，之後喊單資訊也會第一時間通知妳！
+    </div>
+    <div class="welcome-actions">
+      <button class="welcome-btn">✏️ 輸入社群暱稱</button>
+    </div>
+  </div>
+`;
+
+const flexBindHTML = `
+  <div class="bind-card">
+    <div class="bind-head">
+      <span class="bind-check">✓</span>
+      <span>綁定成功</span>
+    </div>
+    <div class="bind-body">
+      <div class="bind-row"><span class="k">社群暱稱</span><span class="v">周媽媽愛買</span></div>
+      <div class="bind-row"><span class="k">會員編號</span><span class="v">VIP-2026-0042</span></div>
+      <div class="bind-row"><span class="k">加入時間</span><span class="v">2026/04/17</span></div>
+    </div>
+  </div>
+`;
+
+const flexShoutHTML = `
+  <div class="shout-card">
+    <div class="shout-hero">
+      <div class="shout-label">🔥 TODAY ONLY</div>
+      <div class="shout-title">日本 7-11 春季新品團購</div>
+      <div class="shout-sub">限量 50 組・今晚 22:00 截止</div>
+    </div>
+    <div class="shout-body">
+      <div class="shout-item">
+        <div class="shout-item-img">🍓</div>
+        <div class="shout-item-info">
+          <div class="shout-item-name">草莓巧克力派</div>
+          <div class="shout-item-price">NT$ 180<small>NT$ 220</small></div>
+        </div>
+      </div>
+      <div class="shout-item">
+        <div class="shout-item-img">🍵</div>
+        <div class="shout-item-info">
+          <div class="shout-item-name">宇治抹茶生巧克力</div>
+          <div class="shout-item-price">NT$ 320<small>NT$ 380</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="shout-urgency">
+      ⏰ 已有 37 人下單・剩 13 組
+    </div>
+    <div class="shout-actions">
+      <button class="shout-btn">查看詳情</button>
+      <button class="shout-btn">立即下單 →</button>
+    </div>
+  </div>
+`;
+
+const adminPanelHTML = `
+  <div class="admin-panel">
+    <div class="admin-head">ADMIN · 後台喊單</div>
+    <div class="admin-body">
+      <div class="admin-title">日本 7-11 春季新品團購</div>
+      <div class="admin-preview">
+        🔥 今日團購 限量 50 組<br>
+        ・草莓巧克力派 NT$180<br>
+        ・宇治抹茶生巧 NT$320<br>
+        ⏰ 今晚 22:00 截止
+      </div>
+      <div class="admin-stat">
+        <span>綁定客人</span>
+        <span class="n">127 位</span>
+      </div>
+      <div class="admin-stat">
+        <span>預計觸及</span>
+        <span class="n">100%</span>
+      </div>
+      <button class="admin-push-btn">🚀 一鍵推播</button>
+    </div>
+  </div>
+`;
+
+const lineModalHTML = `
+  <div class="line-modal">
+    <div class="line-modal-body">
+      <div class="line-modal-title">請輸入社群暱稱</div>
+      <div class="line-modal-sub">此暱稱將用於訂單和喊單的識別</div>
+      <div class="line-modal-input">
+        <span id="modal-typed-text"></span><span class="caret"></span>
+      </div>
+    </div>
+    <div class="line-modal-actions">
+      <button class="line-modal-btn">取消</button>
+      <button class="line-modal-btn">傳送</button>
+    </div>
+  </div>
+`;
+
+const flexOrderHTML = `
+  <div class="flex-card">
+    <div class="flex-card-hero">
+      <div class="flex-card-hero-label">ORDER</div>
+      <div class="flex-card-hero-id">#JP-2026-0847</div>
+    </div>
+    <div class="flex-card-body">
+      <div class="flex-card-row"><span>下單日期</span><strong>04/12</strong></div>
+      <div class="flex-card-row"><span>訂單狀態</span><strong style="color: #D97706;">部分到貨</strong></div>
+      <div class="flex-card-items">
+        <div class="flex-item">
+          <span class="flex-item-name">資生堂防曬霜 × 2</span>
+          <span class="flex-item-status status-done">已到貨</span>
+        </div>
+        <div class="flex-item">
+          <span class="flex-item-name">Pokémon 卡包 × 5</span>
+          <span class="flex-item-status status-wait">採購中</span>
+        </div>
+        <div class="flex-item">
+          <span class="flex-item-name">白い恋人 餅乾 × 1</span>
+          <span class="flex-item-status status-ship">運送中</span>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+const flexShipHTML = `
+  <div class="flex-card">
+    <div class="flex-card-hero" style="background: linear-gradient(135deg, #E85D4A, #F08B5D);">
+      <div class="flex-card-hero-label">SHIPPING DECISION</div>
+      <div class="flex-card-hero-id">要怎麼寄？</div>
+    </div>
+    <div class="flex-card-body">
+      <div style="font-size: 12px; color: #555; line-height: 1.6;">
+        <strong style="color: #1A1A1A;">資生堂防曬霜 × 2</strong> 已到倉庫<br>
+        其他商品還在採購中
+      </div>
+    </div>
+    <div class="flex-card-actions">
+      <button class="flex-btn">⏳ 等齊再寄</button>
+      <button class="flex-btn" style="color: var(--accent-coral);">🚚 先寄這件</button>
+    </div>
+  </div>
+`;
+
+const flexWishHTML = `
+  <div class="wish-card">
+    <div class="wish-head">✨ AI 解析結果</div>
+    <div class="wish-body">
+      <div class="wish-label">商品名稱</div>
+      <div class="wish-value">草莓巧克力派（日本 7-11 新品）</div>
+      <div class="wish-label">數量</div>
+      <div class="wish-value">2 盒</div>
+      <div class="wish-label">原始訊息</div>
+      <div class="wish-note">"幫我代購日本 7-11 新出的草莓巧克力派，2盒，有貨再跟我說價格～"</div>
+    </div>
+  </div>
+`;
+
+let currentScene = 0;
+let animationTimers = [];
+
+function clearAnimations() {
+  animationTimers.forEach(t => {
+    if (typeof t === 'number') {
+      clearTimeout(t);
+    } else if (t && typeof t.clear === 'function') {
+      t.clear();
+    }
+  });
+  animationTimers = [];
+}
+
+function addMessage(msg, container, animate = true) {
+  if (msg.type === 'typing') {
+    const row = document.createElement('div');
+    row.className = 'msg-row in';
+    row.id = 'typing-' + Date.now();
+    row.innerHTML = '<div class="bubble in"><div class="typing"><span></span><span></span><span></span></div></div>';
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+    return row;
+  }
+
+  if (msg.type === 'system') {
+    const row = document.createElement('div');
+    row.style.cssText = 'text-align:center; margin: 10px 0; font-size: 11px; color: rgba(255,255,255,0.9); background: rgba(0,0,0,0.12); padding: 4px 12px; border-radius: 999px; display: inline-block; max-width: 80%; margin-left: auto; margin-right: auto;';
+    row.textContent = msg.text;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'text-align: center;';
+    wrap.appendChild(row);
+    container.appendChild(wrap);
+    container.scrollTop = container.scrollHeight;
+    return wrap;
+  }
+
+  // LINE 輸入訊息 Modal（含打字動畫）
+  if (msg.type === 'line-modal') {
+    const row = document.createElement('div');
+    row.className = 'msg-row';
+    row.style.cssText = 'justify-content: center; margin: 10px 0;';
+    row.innerHTML = lineModalHTML;
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+
+    // 在 modal 內啟動打字動畫
+    if (animate) {
+      const typedText = row.querySelector('#modal-typed-text');
+      const text = '周媽媽愛買';
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        if (i < text.length) {
+          typedText.textContent = text.substring(0, i + 1);
+          i++;
+        } else {
+          clearInterval(typeInterval);
+        }
+      }, 280);
+      animationTimers.push({ clear: () => clearInterval(typeInterval) });
+    } else {
+      const typedText = row.querySelector('#modal-typed-text');
+      if (typedText) typedText.textContent = '周媽媽愛買';
+    }
+    return row;
+  }
+
+  // 代購主後台面板
+  if (msg.type === 'admin-panel') {
+    const row = document.createElement('div');
+    row.className = 'msg-row';
+    row.style.cssText = 'justify-content: center; margin: 10px 0;';
+    row.innerHTML = adminPanelHTML;
+    container.appendChild(row);
+    container.scrollTop = container.scrollHeight;
+    return row;
+  }
+
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + msg.type;
+
+  let inner = '';
+  if (msg.type === 'flex-order') {
+    inner = flexOrderHTML;
+  } else if (msg.type === 'flex-ship') {
+    inner = flexShipHTML;
+  } else if (msg.type === 'flex-wish') {
+    inner = flexWishHTML;
+  } else if (msg.type === 'flex-welcome') {
+    inner = flexWelcomeHTML;
+  } else if (msg.type === 'flex-bind') {
+    inner = flexBindHTML;
+  } else if (msg.type === 'flex-shout') {
+    inner = flexShoutHTML;
+  } else {
+    inner = `<div class="bubble ${msg.type}">${msg.text.replace(/\n/g, '<br>')}</div>`;
+  }
+  row.innerHTML = inner;
+  container.appendChild(row);
+  container.scrollTop = container.scrollHeight;
+  return row;
+}
+
+function playScene(idx) {
+  clearAnimations();
+  const scene = scenes[idx];
+  const body = document.getElementById('chat-body');
+  body.innerHTML = '';
+
+  const animated = idx > 0 && idx < scenes.length - 1;
+
+  if (!animated) {
+    scene.messages.forEach(msg => addMessage(msg, body, false));
+    return;
+  }
+
+  let delay = 200;
+  scene.messages.forEach((msg) => {
+    delay += (msg.delay || 500);
+    const timer = setTimeout(() => {
+      if (msg.type === 'typing') {
+        const el = addMessage(msg, body);
+        setTimeout(() => {
+          if (el.parentNode) el.remove();
+        }, 900);
+      } else {
+        addMessage(msg, body);
+      }
+    }, delay);
+    animationTimers.push(timer);
+  });
+}
+
+function renderControls(idx) {
+  const scene = scenes[idx];
+  document.getElementById('ctrl-label').textContent = `SCENE ${String(idx).padStart(2,'0')} / 06`;
+  document.getElementById('ctrl-title').textContent = scene.title;
+  document.getElementById('ctrl-desc').textContent = scene.desc;
+
+  const stepsEl = document.getElementById('ctrl-steps');
+  stepsEl.innerHTML = '';
+  scene.steps.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'ctrl-step ' + (s.state || '');
+    el.innerHTML = `
+      <div class="ctrl-step-icon">${s.state === 'done' ? '✓' : (i + 1)}</div>
+      <div class="ctrl-step-body">
+        <div class="ctrl-step-title">${s.title}</div>
+        <div class="ctrl-step-desc">${s.desc}</div>
+      </div>
+    `;
+    stepsEl.appendChild(el);
+  });
+
+  document.getElementById('btn-next').textContent = scene.action;
+
+  document.querySelectorAll('.step-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+}
+
+function goToScene(idx) {
+  currentScene = Math.max(0, Math.min(scenes.length - 1, idx));
+  renderControls(currentScene);
+  playScene(currentScene);
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (currentScene >= scenes.length - 1) {
+    goToScene(0);
+  } else {
+    goToScene(currentScene + 1);
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => goToScene(0));
+
+document.querySelectorAll('.step-btn').forEach((btn, i) => {
+  btn.addEventListener('click', () => goToScene(i));
+});
+
+goToScene(0);
+</script>
+
+</body>
+</html>
